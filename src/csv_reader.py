@@ -16,7 +16,7 @@ class CsvReader:
         post_end_header = False
         end_vertex = False
 
-        with open(self.path) as csv_file:
+        with open(self.path, newline='') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=self.separator)
 
             for row in csv_reader:
