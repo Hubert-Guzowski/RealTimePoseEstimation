@@ -1,15 +1,16 @@
 from csv_reader import CsvReader
+import numpy as np
 
 
 class Triangle:
-    def __init__(self, V0, V1, V2):
+    def __init__(self, V0: np.ndarray, V1: np.ndarray, V2: np.ndarray):
         self.V0 = V0
         self.V1 = V1
         self.V2 = V2
 
 
 class Ray:
-    def __init__(self, P0, P1):
+    def __init__(self, P0: np.ndarray, P1: np.ndarray):
         self.P0 = P0
         self.P1 = P1
 
