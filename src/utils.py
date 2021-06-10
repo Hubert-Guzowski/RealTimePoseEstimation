@@ -2,9 +2,7 @@ import cv2
 
 def createFeatures(featureName, numKeypoints):
     if featureName == "ORB":
-        detector = cv2.ORB_create(nfeatures=numKeypoints)
-        descriptor = cv2.ORB_create(nfeatures=numKeypoints)
-        return detector, descriptor
+        return cv2.ORB_create(nfeatures=numKeypoints)
     else:
         raise NotImplementedError
 
@@ -20,7 +18,7 @@ def createMatcher(featureName, useFLANN):
         return cv2.FlannBasedMatcher(index_params, search_params)
 
     elif featureName == "ORB" and useFLANN is False:
-        return cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+        return cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=False)
 
     else:
         raise NotImplementedError

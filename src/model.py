@@ -12,7 +12,7 @@ class Model:
         self.__list_points2d_out = []
         self.__list_points3d_in = []
         self.__descriptors = np.ndarray
-        self.__training_img_path = ""
+        self.__training_img_path = "Data/resized_IMG_3875.jpeg"
 
     def add_correspondence(self, point2d: np.ndarray, point3d: np.ndarray) -> None:
         self.__list_points2d_in.append(point2d)
@@ -27,6 +27,18 @@ class Model:
 
     def add_keypoint(self, keypoint: List[float]) -> None:
         self.__keypoints.append(keypoint)
+
+    def get_training_image_path(self):
+        return self.__training_img_path
+
+    def get_list_points3d_in(self):
+        return self.__list_points3d_in
+
+    def get_descriptors(self):
+        return self.__descriptors
+
+    def get_keypoints(self):
+        return self.__keypoints
 
     def set_training_image_path(self, path: str) -> None:
         self.__training_img_path = path
@@ -48,12 +60,20 @@ class Model:
         # Not sure, if that's correct - documentation is sparse
         # Based on: https://www.programcreek.com/python/example/110693/cv2.FileStorage
         storage = cv2.FileStorage(path, cv2.FILE_STORAGE_READ)
-        self.__list_points3d_in = storage.getNode("points_3d").mat().tolist()
-        self.__descriptors = storage.getNode("descriptors").mat()
+        points3d = storage.getNode("points_3d")
+        descriptors = storage.getNode("descriptors")
+        self.__list_points3d_in = np.array(points3d.mat().tolist())
+        self.__descriptors = np.array(descriptors.mat().tolist())
+
+        def createKeypoint(a, i):
+            return cv2.KeyPoint(a[i], a[i+1], a[i+2], a[i+3], a[i+4], int(a[i+5]), int(a[i+6]))
+
 
         keypoints = storage.getNode("keypoints")
         if not keypoints.empty():
-            self.__keypoints = keypoints.mat().tolist()
+            loaded = [keypoints.at(i).real() for i in range(keypoints.size())]
+            parsed = [createKeypoint(loaded, i) for i in range(0, len(loaded), 7)]
+            self.__keypoints = parsed
 
         training_image_path = storage.getNode("training_image_path")
         if not training_image_path.empty():
