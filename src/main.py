@@ -8,9 +8,9 @@ import main_utils
 
 # Settings
 
-video_read_path = "samples/cpp/tutorial_code/calib3d/real_time_pose_estimation/Data/box.mp4"
-yml_read_path = "samples/cpp/tutorial_code/calib3d/real_time_pose_estimation/Data/cookies_ORB.yml"
-ply_read_path = "samples/cpp/tutorial_code/calib3d/real_time_pose_estimation/Data/box.ply"
+video_read_path = "Data/box.mp4"
+yml_read_path = "Data/cookies_ORB.yml"
+ply_read_path = "Data/box.ply"
 
 f = 55                          # focal length in mm
 sx = 22.3                       # sensor size           
@@ -67,8 +67,8 @@ model.load(yml_read_path)
 mesh = Mesh()
 mesh.load(ply_read_path)
 
-detector, descriptor = utils.createFeatures(featureName, numKeyPoints)
-rmatcher = RobustMatcher(detector, descriptor, utils.createMatcher(featureName, useFLANN), ratioTest, cv2.imread(model.__training_img_path))
+detector = utils.createFeatures(featureName, numKeyPoints)
+rmatcher = RobustMatcher(detector, utils.createMatcher(featureName, useFLANN), ratioTest, cv2.imread(model.get_training_image_path()))
 
 nStates = 18
 nMeasurements = 6
@@ -79,9 +79,9 @@ KF = main_utils.initKalmanFilter(nStates, nMeasurements, nInputs, dt)
 
 good_measurement = False
 
-list_points3d_model = model.__list_points3d_in
-descriptors_model = model.__descriptors
-keypoints_model = model.__keypoints
+list_points3d_model = model.get_list_points3d_in()
+descriptors_model = model.get_descriptors()
+keypoints_model = model.get_keypoints()
 
 cv2.namedWindow("REAL TIME DEMO", cv2.WINDOW_KEEPRATIO)
 
@@ -107,7 +107,7 @@ while cv2.waitKey(30) != 27:
 
     frame_matching = rmatcher.getImageMatching()
 
-    if frame_matching:
+    if frame_matching is not None:
         cv2.imshow("Keypoints matching", frame_matching)
 
     list_points3d_model_match = []
