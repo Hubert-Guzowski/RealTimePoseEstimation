@@ -32,12 +32,12 @@ def drawFPS(image, fps, color):
 
 def drawConfidence(image, convidence, color):
     text  = str(convidence) + '%'
-    image = cv2.putText(image, text , (500, 75), fontFace, fontScale, color, thickness_font, 8)
+    image = cv2.putText(image, text, (500, 75), fontFace, fontScale, color, thickness_font, 8)
 
 
 def drawCounter(image, n, n_max, color):
     text = str(n) + " of " + str(n_max) + " points"
-    image = cv2.putText(image, text , (500, 75), fontFace, fontScale, color, thickness_font, 8)
+    image = cv2.putText(image, text, (500, 75), fontFace, fontScale, color, thickness_font, 8)
 
 
 def drawPoints(image, list_points_2d, list_points_3d, color):
@@ -58,20 +58,20 @@ def drawPoints(image, list_points_2d, list_points_3d, color):
 
 def draw2DPoints(image, list_points_2d, color):
     for point_2d in list_points_2d:
-        image = cv2.circle(image, tuple(point_2d), radius, color, -1, lineType)
+        image = cv2.circle(image, tuple(map(int, point_2d)), radius, color, -1, lineType)
 
 
 def drawArrow(image, p: np.array, q: np.array, color, arrowMagnitude = 9, thickness = 1, line_type = 8, shift = 0):
-    image = cv2.line(image, tuple(p), tuple(q), color, thickness, line_type, shift)
+    image = cv2.line(image, tuple(map(int, p)), tuple(map(int, q)), color, thickness, line_type, shift)
 
     angle = math.atan2(p[1] - q[1], p[0] - q[0])
     p[0] = int(q[0] + arrowMagnitude * math.cos(angle + math.pi/4))
     p[1] = int(q[1] + arrowMagnitude * math.sin(angle + math.pi/4))
-    image = cv2.line(image, tuple(p), tuple(q), color, thickness, line_type, shift)
+    image = cv2.line(image, tuple(map(int, p)), tuple(map(int, q)), color, thickness, line_type, shift)
 
     p[0] = int(q[0] + arrowMagnitude * math.cos(angle - math.pi/4))
     p[1] = int(q[1] + arrowMagnitude * math.sin(angle - math.pi/4))
-    image = cv2.line(image, tuple(p), tuple(q), color, thickness, line_type, shift)
+    image = cv2.line(image, tuple(map(int, p)), tuple(map(int, q)), color, thickness, line_type, shift)
 
 
 def draw3DCoordinateAxes(image, list_points_2d):

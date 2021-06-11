@@ -8,9 +8,9 @@ import main_utils
 
 # Settings
 
-video_read_path = "Data/box.mp4"
-yml_read_path = "Data/cookies_ORB.yml"
-ply_read_path = "Data/box.ply"
+video_read_path = "../Data/box.mp4"
+yml_read_path = "../Data/cookies_ORB.yml"
+ply_read_path = "../Data/box.ply"
 
 f = 55                          # focal length in mm
 sx = 22.3                       # sensor size           
@@ -67,7 +67,7 @@ model.load(yml_read_path)
 mesh = Mesh()
 mesh.load(ply_read_path)
 
-detector = utils.createFeatures(featureName, numKeyPoints)
+detector, descriptor = utils.createFeatures(featureName, numKeyPoints)
 rmatcher = RobustMatcher(detector, utils.createMatcher(featureName, useFLANN), ratioTest, cv2.imread(model.get_training_image_path()))
 
 nStates = 18
@@ -125,8 +125,7 @@ while cv2.waitKey(30) != 27:
     good_measurement = False
     list_points2d_inliers = []
 
-    if good_matches.size() >= 4:
-
+    if len(good_matches) >= 4:
         inliers_idx = pnp_detection.estimatePoseRANSAC( 
             list_points3d_model_match, 
             list_points2d_scene_match,

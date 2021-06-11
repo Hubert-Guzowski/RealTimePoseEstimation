@@ -12,7 +12,7 @@ class Model:
         self.__list_points2d_out = []
         self.__list_points3d_in = []
         self.__descriptors = np.ndarray
-        self.__training_img_path = "Data/resized_IMG_3875.jpeg"
+        self.__training_img_path = "../Data/resized_IMG_3875.jpeg"
 
     def add_correspondence(self, point2d: np.ndarray, point3d: np.ndarray) -> None:
         self.__list_points2d_in.append(point2d)
