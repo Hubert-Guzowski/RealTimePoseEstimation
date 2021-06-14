@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from mesh import Mesh
 from model import Model
+from pnp_problem import PnPProblem
 from robustmatcher import RobustMatcher
 import utils
 import main_utils
@@ -58,7 +59,7 @@ displayFilteredPose = False
 
 # Initialization
 
-pnp_detection = None # TODO
+pnp_detection = PnPProblem(cam_params)
 pnp_detection_est = None # TODO
 
 model = Model()
@@ -127,8 +128,8 @@ while cv2.waitKey(30) != 27:
 
     if len(good_matches) >= 4:
         inliers_idx = pnp_detection.estimatePoseRANSAC( 
-            list_points3d_model_match, 
-            list_points2d_scene_match,
+            np.array(list_points3d_model_match),
+            np.array(list_points2d_scene_match),
             pnpMethod,
             iterationsCount, 
             reprojectionError, 
