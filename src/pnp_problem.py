@@ -89,7 +89,7 @@ class PnPProblem:
         rvec = np.zeros((3, 1))
         tvec = np.zeros((3, 1))
 
-        retval, cameraMatrix, rvec, tvec \
+        retval, rvec, tvec, inliers \
             = cv2.solvePnPRansac(list_points3d_model_match, list_points2d_scene_match, self.A_matrix_, distCoeffs,
                                  rvec=rvec, tvec=tvec, useExtrinsicGuess=False, iterationsCount=iterationsCount,
                                  reprojectionError=reprojectionError, confidence=confidence, flags=pnpMethod)
@@ -98,6 +98,8 @@ class PnPProblem:
 
         self.t_matrix_ = tvec
         self.set_P_matrix(self.R_matrix_, self.t_matrix_)
+
+        return inliers
 
     def backproject3DPoint(self, point3d: np.array):
         point_3d = np.ones((4, 1))

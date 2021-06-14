@@ -136,12 +136,12 @@ while cv2.waitKey(30) != 27:
             confidence)
 
         for n in inliers_idx:
-            point2d = list_points2d_scene_match[n]
+            point2d = list_points2d_scene_match[n[0]]
             list_points2d_inliers.append(point2d)
 
         utils.draw2DPoints(frame_vis, list_points2d_inliers, blue)
 
-        if inliers_idx >= minInliersKalman:
+        if len(inliers_idx) >= minInliersKalman:
             translation_measured = pnp_detection.get_t_matrix()
             rotation_measured = pnp_detection.get_R_matrix()
             measurements = utils.fillMeasurements(measurements, translation_measured, rotation_measured)
