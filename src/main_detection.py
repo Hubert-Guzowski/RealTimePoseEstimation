@@ -2,15 +2,16 @@ import cv2
 import numpy as np
 from mesh import Mesh
 from model import Model
+from pnp_problem import PnPProblem
 from robustmatcher import RobustMatcher
 import utils
 import main_utils
 
 # Settings
 
-video_read_path = "samples/cpp/tutorial_code/calib3d/real_time_pose_estimation/Data/box.mp4"
-yml_read_path = "samples/cpp/tutorial_code/calib3d/real_time_pose_estimation/Data/cookies_ORB.yml"
-ply_read_path = "samples/cpp/tutorial_code/calib3d/real_time_pose_estimation/Data/box.ply"
+video_read_path = "../Data/box.mp4"
+yml_read_path = "../Data/cookies_ORB.yml"
+ply_read_path = "../Data/box.ply"
 
 f = 55                          # focal length in mm
 sx = 22.3                       # sensor size           
@@ -58,8 +59,8 @@ displayFilteredPose = False
 
 # Initialization
 
-pnp_detection = None # TODO
-pnp_detection_est = None # TODO
+pnp_detection = PnPProblem(cam_params)
+pnp_detection_est = PnPProblem(cam_params)
 
 model = Model()
 model.load(yml_read_path)
@@ -68,7 +69,7 @@ mesh = Mesh()
 mesh.load(ply_read_path)
 
 detector, descriptor = utils.createFeatures(featureName, numKeyPoints)
-rmatcher = RobustMatcher(detector, descriptor, utils.createMatcher(featureName, useFLANN), ratioTest, cv2.imread(model.__training_img_path))
+rmatcher = RobustMatcher(detector, utils.createMatcher(featureName, useFLANN), ratioTest, cv2.imread(model.get_training_image_path()))
 
 nStates = 18
 nMeasurements = 6
@@ -79,9 +80,9 @@ KF = main_utils.initKalmanFilter(nStates, nMeasurements, nInputs, dt)
 
 good_measurement = False
 
-list_points3d_model = model.__list_points3d_in
-descriptors_model = model.__descriptors
-keypoints_model = model.__keypoints
+list_points3d_model = model.get_list_points3d_in()
+descriptors_model = model.get_descriptors()
+keypoints_model = model.get_keypoints()
 
 cv2.namedWindow("REAL TIME DEMO", cv2.WINDOW_KEEPRATIO)
 
@@ -107,7 +108,7 @@ while cv2.waitKey(30) != 27:
 
     frame_matching = rmatcher.getImageMatching()
 
-    if frame_matching:
+    if frame_matching is not None:
         cv2.imshow("Keypoints matching", frame_matching)
 
     list_points3d_model_match = []
@@ -125,26 +126,25 @@ while cv2.waitKey(30) != 27:
     good_measurement = False
     list_points2d_inliers = []
 
-    if good_matches.size() >= 4:
-
+    if len(good_matches) >= 4:
         inliers_idx = pnp_detection.estimatePoseRANSAC( 
-            list_points3d_model_match, 
-            list_points2d_scene_match,
+            np.array(list_points3d_model_match),
+            np.array(list_points2d_scene_match),
             pnpMethod,
             iterationsCount, 
             reprojectionError, 
             confidence)
 
         for n in inliers_idx:
-            point2d = list_points2d_scene_match[n]
+            point2d = list_points2d_scene_match[n[0]]
             list_points2d_inliers.append(point2d)
 
         utils.draw2DPoints(frame_vis, list_points2d_inliers, blue)
 
-        if inliers_idx >= minInliersKalman:
+        if len(inliers_idx) >= minInliersKalman:
             translation_measured = pnp_detection.get_t_matrix()
             rotation_measured = pnp_detection.get_R_matrix()
-            measurements = utils.fillMeasurements(measurements, translation_measured, rotation_measured)
+            measurements = main_utils.fillMeasurements(translation_measured, rotation_measured)
             good_measurement = True
 
         translation_estimated, rotation_estimated = main_utils.updateKalmanFilter(KF, measurements)
@@ -172,13 +172,13 @@ while cv2.waitKey(30) != 27:
     fps = 1 / tm.getTimeSec()
     utils.drawFPS(frame_vis, fps, yellow)
 
-    detection_ratio = (inliers_idx.size() / good_matches.size()) * 100
+    detection_ratio = (len(inliers_idx) / len(good_matches)) * 100
     utils.drawConfidence(frame_vis, detection_ratio, yellow)
 
-    inliers_int = inliers_idx.size()
-    outliers_int = good_matches.size() - inliers_idx.size()
+    inliers_int = len(inliers_idx)
+    outliers_int = len(good_matches) - len(inliers_idx)
 
-    text = "Found {} of {} matches".format(inliers_int, good_matches.size())
+    text = "Found {} of {} matches".format(inliers_int, len(good_matches))
     text2 = "Inliers: {} - Outliers: {}".format(inliers_int, outliers_int)
     utils.drawText(frame_vis, text, green)
     utils.drawText2(frame_vis, text2, red)
