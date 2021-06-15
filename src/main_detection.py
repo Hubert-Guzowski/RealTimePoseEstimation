@@ -144,7 +144,7 @@ while cv2.waitKey(30) != 27:
         if len(inliers_idx) >= minInliersKalman:
             translation_measured = pnp_detection.get_t_matrix()
             rotation_measured = pnp_detection.get_R_matrix()
-            measurements = utils.fillMeasurements(measurements, translation_measured, rotation_measured)
+            measurements = main_utils.fillMeasurements(translation_measured, rotation_measured)
             good_measurement = True
 
         translation_estimated, rotation_estimated = main_utils.updateKalmanFilter(KF, measurements)
