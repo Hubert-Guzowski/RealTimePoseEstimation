@@ -8,7 +8,7 @@ def initKalmanFilter(nStates, nMeasurements, nInputs, dt):
     KF.measurementNoiseCov = cv2.setIdentity(KF.measurementNoiseCov, 1e-2)
     KF.errorCovPost = cv2.setIdentity(KF.errorCovPost, 1)
     dt2 = 0.5*dt*dt
-    transitionMatrix = np.identity(nStates)
+    transitionMatrix = np.identity(nStates, dtype=np.float32)
     transitionMatrix[0, 3] = dt
     transitionMatrix[1, 4] = dt
     transitionMatrix[2, 5] = dt
@@ -31,7 +31,7 @@ def initKalmanFilter(nStates, nMeasurements, nInputs, dt):
 
     KF.transitionMatrix = transitionMatrix
 
-    measurementMatrix = np.zeros((nMeasurements, nStates))
+    measurementMatrix = np.zeros((nMeasurements, nStates), dtype=np.float32)
     measurementMatrix[0, 0] = 1
     measurementMatrix[1, 1] = 1
     measurementMatrix[2, 2] = 1
@@ -44,8 +44,8 @@ def initKalmanFilter(nStates, nMeasurements, nInputs, dt):
     return KF
 
 def updateKalmanFilter(KF, measurement):
-    translation_estimated = np.zeros(3, dtype=np.float64)
-    rotation_estimated = np.zeros((3, 3), dtype=np.float64)
+    translation_estimated = np.zeros(3, dtype=np.float32)
+    rotation_estimated = np.zeros((3, 3), dtype=np.float32)
 
     predicition = KF.predict()
     estimated = KF.correct(measurement)
@@ -54,7 +54,7 @@ def updateKalmanFilter(KF, measurement):
     translation_estimated[1] = estimated[1]
     translation_estimated[2] = estimated[2]
 
-    eulers_estimated = np.zeros(3, dtype=np.float64)
+    eulers_estimated = np.zeros(3, dtype=np.float32)
     eulers_estimated[0] = estimated[9]
     eulers_estimated[1] = estimated[10]
     eulers_estimated[2] = estimated[11]
@@ -64,7 +64,7 @@ def updateKalmanFilter(KF, measurement):
     return translation_estimated, rotation_estimated
 
 def fillMeasurements(translation_measured, rotation_measured):
-    measurements = np.zeros(6, dtype=np.float64)
+    measurements = np.zeros(6, dtype=np.float32)
     measured_eulers = utils.rot2euler(rotation_measured)
 
     measurements[0] = translation_measured[0]

@@ -60,7 +60,7 @@ displayFilteredPose = False
 # Initialization
 
 pnp_detection = PnPProblem(cam_params)
-pnp_detection_est = None # TODO
+pnp_detection_est = PnPProblem(cam_params)
 
 model = Model()
 model.load(yml_read_path)
@@ -184,7 +184,6 @@ while cv2.waitKey(30) != 27:
     utils.drawText2(frame_vis, text2, red)
 
     cv2.imshow("REAL TIME DEMO", frame_vis)
-    cv2.waitKey(0)
 
     # TODO - 345:367 Saving video
 

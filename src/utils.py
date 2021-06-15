@@ -80,15 +80,16 @@ def draw3DCoordinateAxes(image, list_points_2d):
     blue = (255, 0, 0)
     black = (0, 0, 0)
 
-    origin = list_points_2d[0]
-    pointX = list_points_2d[1]
-    pointY = list_points_2d[2]
-    pointZ = list_points_2d[3]
+    origin = list_points_2d[0][:, 0].astype(np.int32)
+    pointX = list_points_2d[1][:, 0].astype(np.int32)
+    pointY = list_points_2d[2][:, 0].astype(np.int32)
+    pointZ = list_points_2d[3][:, 0].astype(np.int32)
+
 
     drawArrow(image, origin, pointX, red, 9, 2)
     drawArrow(image, origin, pointY, green, 9, 2)
     drawArrow(image, origin, pointZ, blue, 9, 2)
-    image = cv2.circle(image, origin, radius/2, black, -1, lineType)
+    image = cv2.circle(image, origin, int(radius/2), black, -1, lineType)
 
 
 def drawObjectMesh(image, mesh: Mesh, pnpProblem: PnPProblem, color):
@@ -100,9 +101,9 @@ def drawObjectMesh(image, mesh: Mesh, pnpProblem: PnPProblem, color):
         point_3d_1 = mesh.list_vertex[tmp_triangle[1]]
         point_3d_2 = mesh.list_vertex[tmp_triangle[2]]
 
-        point_2d_0 = pnpProblem.backproject3DPoint(point_3d_0)
-        point_2d_1 = pnpProblem.backproject3DPoint(point_3d_1)
-        point_2d_2 = pnpProblem.backproject3DPoint(point_3d_2)
+        point_2d_0 = pnpProblem.backproject3DPoint(point_3d_0)[:, 0].astype(np.int32)
+        point_2d_1 = pnpProblem.backproject3DPoint(point_3d_1)[:, 0].astype(np.int32)
+        point_2d_2 = pnpProblem.backproject3DPoint(point_3d_2)[:, 0].astype(np.int32)
 
         image = cv2.line(image, point_2d_0, point_2d_1, color, 1)
         image = cv2.line(image, point_2d_1, point_2d_2, color, 1)

@@ -30,6 +30,8 @@ class Mesh:
     def load(self, path):
         csv_reader = CsvReader(path)
         self.list_vertex, self.list_triangles = csv_reader.read_ply()
+        self.list_triangles = np.array(self.list_triangles)
+        self.list_vertex = np.array(self.list_vertex)
 
         self.num_vertex = len(self.list_vertex)
         self.num_triangles = len(self.list_triangles)

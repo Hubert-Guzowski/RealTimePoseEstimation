@@ -103,9 +103,9 @@ class PnPProblem:
 
     def backproject3DPoint(self, point3d: np.array):
         point_3d = np.ones((4, 1))
-        point_3d[:point3d.shape[0]] = point_3d
+        point_3d[:3, 0] = point3d
 
-        point_2d = self.A_matrix_ * self.P_matrix_ * point_3d
+        point_2d = self.A_matrix_ @ self.P_matrix_ @ point_3d
 
         normalized_point2d = np.zeros((2, 1))
         normalized_point2d[0] = point_2d[0] / point_2d[2]
