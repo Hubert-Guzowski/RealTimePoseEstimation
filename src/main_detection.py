@@ -176,9 +176,9 @@ while cv2.waitKey(30) != 27:
     utils.drawConfidence(frame_vis, detection_ratio, yellow)
 
     inliers_int = len(inliers_idx)
-    outliers_int = good_matches.size() - len(inliers_idx)
+    outliers_int = len(good_matches) - len(inliers_idx)
 
-    text = "Found {} of {} matches".format(inliers_int, len(good_matches)
+    text = "Found {} of {} matches".format(inliers_int, len(good_matches))
     text2 = "Inliers: {} - Outliers: {}".format(inliers_int, outliers_int)
     utils.drawText(frame_vis, text, green)
     utils.drawText2(frame_vis, text2, red)
