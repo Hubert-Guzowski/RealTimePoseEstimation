@@ -172,18 +172,19 @@ while cv2.waitKey(30) != 27:
     fps = 1 / tm.getTimeSec()
     utils.drawFPS(frame_vis, fps, yellow)
 
-    detection_ratio = (inliers_idx.size() / good_matches.size()) * 100
+    detection_ratio = (len(inliers_idx) / len(good_matches)) * 100
     utils.drawConfidence(frame_vis, detection_ratio, yellow)
 
-    inliers_int = inliers_idx.size()
-    outliers_int = good_matches.size() - inliers_idx.size()
+    inliers_int = len(inliers_idx)
+    outliers_int = good_matches.size() - len(inliers_idx)
 
-    text = "Found {} of {} matches".format(inliers_int, good_matches.size())
+    text = "Found {} of {} matches".format(inliers_int, len(good_matches)
     text2 = "Inliers: {} - Outliers: {}".format(inliers_int, outliers_int)
     utils.drawText(frame_vis, text, green)
     utils.drawText2(frame_vis, text2, red)
 
     cv2.imshow("REAL TIME DEMO", frame_vis)
+    cv2.waitKey(0)
 
     # TODO - 345:367 Saving video
 
