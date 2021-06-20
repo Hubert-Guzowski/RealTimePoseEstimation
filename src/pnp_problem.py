@@ -94,12 +94,17 @@ class PnPProblem:
                                  rvec=rvec, tvec=tvec, useExtrinsicGuess=False, iterationsCount=iterationsCount,
                                  reprojectionError=reprojectionError, confidence=confidence, flags=pnpMethod)
 
+
         cv2.Rodrigues(rvec, self.R_matrix_)
 
         self.t_matrix_ = tvec
         self.set_P_matrix(self.R_matrix_, self.t_matrix_)
 
         return inliers
+
+    def verifyPoints(self, mesh):
+        return [self.backproject3DPoint(point) for point in mesh.list_vertex]
+
 
     def backproject3DPoint(self, point3d: np.array):
         point_3d = np.ones((4, 1))
@@ -113,7 +118,7 @@ class PnPProblem:
 
         return normalized_point2d
 
-    def backproject2DPoint(self, mesh: Mesh, point2d: np.array, point3d: np.array) -> Tuple[bool, np.array]:
+    def backproject2DPoint(self, mesh: Mesh, point2d: np.array) -> Tuple[bool, np.array]:
         triangles_list = mesh.list_triangles
 
         lmb = 8
@@ -125,9 +130,9 @@ class PnPProblem:
         point2d_vec[1] = v * lmb
         point2d_vec[2] = lmb
 
-        X_c = np.linalg.inv(self.A_matrix_) * point2d_vec
-        X_w = np.linalg.inv(self.R_matrix_) * (X_c - self.t_matrix_)
-        C_op = np.multiply(np.linalg.inv(self.R_matrix_), -1) * self.t_matrix_
+        X_c = np.linalg.inv(self.A_matrix_) @ point2d_vec
+        X_w = np.linalg.inv(self.R_matrix_) @ (X_c - self.t_matrix_)
+        C_op = np.multiply(np.linalg.inv(self.R_matrix_), -1) @ self.t_matrix_
 
         ray = X_w - C_op
         ray = ray / np.linalg.norm(ray)
@@ -165,24 +170,25 @@ class PnPProblem:
         O = ray.P0
         D = ray.P1
 
+
         e1 = np.subtract(V2, V1)
         e2 = np.subtract(V3, V1)
 
-        P = np.cross(D, e2)
-        det = np.matmul(e1, P)
+        P = np.cross(D[:, 0], e2)
+        det = np.dot(e1, P)
 
-        if det > -EPSILON and det > EPSILON:
+        if abs(det) < EPSILON:
             return False, 0.0
         inv_det = 1.0 / det
 
-        T = np.subtract(O, V1)
-        u = np.matmul(T, P) * inv_det
+        T = np.subtract(O[:, 0], V1)
+        u = np.dot(T, P) * inv_det
 
         if u < 0.0 or u > 1.0:
             return False, 0.0
 
         Q = np.cross(T, e1)
-        v = np.matmul(D, Q) * inv_det
+        v = np.dot(D[:, 0], Q) * inv_det
 
         if v < 0.0 or u + v > 1.0:
             return False, 0.0
@@ -193,3 +199,5 @@ class PnPProblem:
             return True, t
 
         return False, 0.0
+
+

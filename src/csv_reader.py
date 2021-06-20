@@ -40,7 +40,7 @@ class CsvReader:
                             count = 0
                             end_vertex = True
                     elif end_vertex and count < num_triangles:
-                        triangle = np.array([int(row[0]), int(row[1]), int(row[2])])
+                        triangle = np.array([int(row[1]), int(row[2]), int(row[3])])
                         list_triangles.append(triangle)
 
                         count += 1

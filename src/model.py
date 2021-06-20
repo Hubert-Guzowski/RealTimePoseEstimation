@@ -11,7 +11,7 @@ class Model:
         self.__list_points2d_in = []
         self.__list_points2d_out = []
         self.__list_points3d_in = []
-        self.__descriptors = np.ndarray
+        self.__descriptors = []
         self.__training_img_path = "../Data/resized_IMG_3875.jpeg"
 
     def add_correspondence(self, point2d: np.ndarray, point3d: np.ndarray) -> None:
@@ -20,10 +20,10 @@ class Model:
         self.__n_correspondences += 1
 
     def add_outlier(self, point2d: np.ndarray) -> None:
-        self.__list_points2d_in.append(point2d)
+        self.__list_points2d_out.append(point2d)
 
     def add_descriptor(self, descriptor: np.ndarray) -> None:
-        self.__descriptors = np.vstack(self.__descriptors, descriptor)
+        self.__descriptors.append(descriptor)
 
     def add_keypoint(self, keypoint: List[float]) -> None:
         self.__keypoints.append(keypoint)
@@ -33,6 +33,12 @@ class Model:
 
     def get_list_points3d_in(self):
         return self.__list_points3d_in
+
+    def get_list_points2d_in(self):
+        return self.__list_points2d_in
+
+    def get_list_points2d_out(self):
+        return self.__list_points2d_out
 
     def get_descriptors(self):
         return self.__descriptors
@@ -46,12 +52,20 @@ class Model:
     def save(self, path: str) -> None:
         points_3d_matrix = np.array(self.__list_points3d_in)
         points_2d_matrix = np.array(self.__list_points2d_in)
+        descriptors = np.array(self.__descriptors)
+
+        def serializeKeypoints():
+            return np.array(
+                [
+                    [kp.pt[0], kp.pt[1], kp.size, kp.angle, kp.response, kp.octave, kp.class_id] for kp in self.__keypoints
+                ]
+            ).flatten()
 
         storage = cv2.FileStorage(path, cv2.FILE_STORAGE_WRITE)
         storage.write("points_3d", points_3d_matrix)
         storage.write("points_2d", points_2d_matrix)
-        storage.write("keypoints", self.__keypoints)
-        storage.write("descriptors", self.__descriptors)
+        storage.write("keypoints", serializeKeypoints())
+        storage.write("descriptors", descriptors)
         storage.write("training_image_path", self.__training_img_path)
 
         storage.release()
