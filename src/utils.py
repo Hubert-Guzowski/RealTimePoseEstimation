@@ -61,7 +61,9 @@ def draw2DPoints(image, list_points_2d, color):
         image = cv2.circle(image, tuple(map(int, point_2d)), radius, color, -1, lineType)
 
 
-def drawArrow(image, p: np.array, q: np.array, color, arrowMagnitude = 9, thickness = 1, line_type = 8, shift = 0):
+def drawArrow(image, p_or: np.array, q_or: np.array, color, arrowMagnitude = 9, thickness = 1, line_type = 8, shift = 0):
+    p = np.copy(p_or)
+    q = np.copy(q_or)
     image = cv2.line(image, tuple(map(int, p)), tuple(map(int, q)), color, thickness, line_type, shift)
 
     angle = math.atan2(p[1] - q[1], p[0] - q[0])
