@@ -9,19 +9,19 @@ import main_utils
 
 # Settings
 
-video_read_path = "../Data/box.mp4"
-yml_read_path = "../Data/cookies_ORB2.yml"
-ply_read_path = "../Data/box.ply"
+# video_read_path = "../Data/box.mp4"
+# yml_read_path = "../Data/cookies_ORB2.yml"
+# ply_read_path = "../Data/box.ply"
 
-# video_read_path = "../tea_box/teabox.mp4"
-# yml_read_path = "../tea_box/teabox_ORB_good2.yml"
-# ply_read_path = "../tea_box/teabox.ply"
+video_read_path = "../tea_box/tracking/LINK_%04d.JPG"
+yml_read_path = "../tea_box/teabox_ORB.yml"
+ply_read_path = "../tea_box/teabox.ply"
 
 f = 55                          # focal length in mm
 sx = 22.3                       # sensor size           
 sy = 14.9                       # sensor size
-width = 640                     # image size
-height = 480                    # image size
+width = 3680                     # image size
+height = 2456                    # image size
 
 # f = 55                          # focal length in mm
 # sx = 22.3                       # sensor size           
@@ -44,7 +44,7 @@ yellow = (0, 255, 255, 0)
 
 # Robust Matcher parameters
 numKeyPoints = 2000
-ratioTest = .8
+ratioTest = .85
 fast_match = True
 
 # RANSAC parameters
@@ -172,7 +172,7 @@ while cv2.waitKey(30) != 27:
         pose_points2d.append(pnp_detection_est.backproject3DPoint((l, 0, 0)))
         pose_points2d.append(pnp_detection_est.backproject3DPoint((0, l, 0)))
         pose_points2d.append(pnp_detection_est.backproject3DPoint((0, 0, l)))
-        # utils.draw3DCoordinateAxes(frame_vis, pose_points2d)
+        utils.draw3DCoordinateAxes(frame_vis, pose_points2d)
     else:
         utils.drawObjectMesh(frame_vis, mesh, pnp_detection, green)
         pose_points2d.append(pnp_detection.backproject3DPoint((0, 0, 0)))

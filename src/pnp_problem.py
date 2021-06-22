@@ -7,6 +7,8 @@ from mesh import Mesh, Ray, Triangle
 
 
 def get_nearest_3D_point(points_list: List[np.array], origin: np.array):
+    if len(points_list) < 2:
+        return points_list[0]
     p1 = points_list[0]
     p2 = points_list[1]
 

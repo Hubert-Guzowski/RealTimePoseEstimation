@@ -42,7 +42,7 @@ def drawCounter(image, n, n_max, color):
 
 def drawPoints(image, list_points_2d, list_points_3d, color):
     for i in range(len(list_points_2d)):
-        point_2d = list_points_2d[i]
+        point_2d = list_points_2d[i].astype(np.int32)
         point_3d = list_points_3d[i]
 
         idx = str(i + 1)
@@ -53,7 +53,7 @@ def drawPoints(image, list_points_2d, list_points_3d, color):
 
         point_2d[0] = point_2d[0] + 10
         point_2d[1] = point_2d[1] - 10
-        image = cv2.putText(image, text, tuple(point_2d), fontFace, fontScale, color, thickness_font, 8)
+        image = cv2.putText(image, text, point_2d, fontFace, fontScale, color, thickness_font, 8)
 
 
 def draw2DPoints(image, list_points_2d, color):

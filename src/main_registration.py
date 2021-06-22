@@ -13,8 +13,8 @@ end_registration = False
 f = 55                          # focal length in mm
 sx = 22.3                       # sensor size           
 sy = 14.9                       # sensor size
-width = 718                     # image size
-height = 480                    # image size
+width = 3680                     # image size
+height = 2456                    # image size
 
 cam_params = {
     "fx": width * f / sx,
@@ -23,8 +23,8 @@ cam_params = {
     "cy": height / 2
 }
 
-n = 7
-pts = [1, 2, 3, 5, 6, 7, 8]
+n = 6
+pts = [1, 2, 3, 4, 7, 8]
 registration = ModelRegistration()
 model = Model()
 mesh = Mesh()
@@ -43,10 +43,10 @@ def onMouseModelRegistration(event, x, y, flags, param):
             if registration.getNumRegist() == registration.getNumMax():
                 end_registration = True
 
-img_path = "../Data/mine.jpg"
-ply_read_path = "../Data/box.ply"
-write_path = "../Data/cookies_ORB2.yml"
-numKeyPoints = 9000
+img_path = "../tea_box/init_texture/DSC_9743.JPG"
+ply_read_path = "../tea_box/teabox.ply"
+write_path = "../tea_box/teabox_ORB.yml"
+numKeyPoints = 15000
 featureName = "ORB"
 
 mesh.load(ply_read_path)
