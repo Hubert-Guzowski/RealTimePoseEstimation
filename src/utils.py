@@ -42,7 +42,7 @@ def drawCounter(image, n, n_max, color):
 
 def drawPoints(image, list_points_2d, list_points_3d, color):
     for i in range(len(list_points_2d)):
-        point_2d = list_points_2d[i]
+        point_2d = list_points_2d[i].astype(np.int32)
         point_3d = list_points_3d[i]
 
         idx = str(i + 1)
@@ -53,7 +53,7 @@ def drawPoints(image, list_points_2d, list_points_3d, color):
 
         point_2d[0] = point_2d[0] + 10
         point_2d[1] = point_2d[1] - 10
-        image = cv2.putText(image, text, (500, 75), fontFace, fontScale, color, thickness_font, 8)
+        image = cv2.putText(image, text, point_2d, fontFace, fontScale, color, thickness_font, 8)
 
 
 def draw2DPoints(image, list_points_2d, color):
@@ -61,7 +61,9 @@ def draw2DPoints(image, list_points_2d, color):
         image = cv2.circle(image, tuple(map(int, point_2d)), radius, color, -1, lineType)
 
 
-def drawArrow(image, p: np.array, q: np.array, color, arrowMagnitude = 9, thickness = 1, line_type = 8, shift = 0):
+def drawArrow(image, p_or: np.array, q_or: np.array, color, arrowMagnitude = 9, thickness = 1, line_type = 8, shift = 0):
+    p = np.copy(p_or)
+    q = np.copy(q_or)
     image = cv2.line(image, tuple(map(int, p)), tuple(map(int, q)), color, thickness, line_type, shift)
 
     angle = math.atan2(p[1] - q[1], p[0] - q[0])
@@ -89,7 +91,7 @@ def draw3DCoordinateAxes(image, list_points_2d):
     drawArrow(image, origin, pointX, red, 9, 2)
     drawArrow(image, origin, pointY, green, 9, 2)
     drawArrow(image, origin, pointZ, blue, 9, 2)
-    image = cv2.circle(image, origin, int(radius/2), black, -1, lineType)
+    image = cv2.circle(image, tuple(origin), int(radius/2), black, -1, lineType)
 
 
 def drawObjectMesh(image, mesh: Mesh, pnpProblem: PnPProblem, color):
@@ -105,9 +107,9 @@ def drawObjectMesh(image, mesh: Mesh, pnpProblem: PnPProblem, color):
         point_2d_1 = pnpProblem.backproject3DPoint(point_3d_1)[:, 0].astype(np.int32)
         point_2d_2 = pnpProblem.backproject3DPoint(point_3d_2)[:, 0].astype(np.int32)
 
-        image = cv2.line(image, point_2d_0, point_2d_1, color, 1)
-        image = cv2.line(image, point_2d_1, point_2d_2, color, 1)
-        image = cv2.line(image, point_2d_2, point_2d_0, color, 1)
+        image = cv2.line(image, tuple(point_2d_0), tuple(point_2d_1), color, 1)
+        image = cv2.line(image, tuple(point_2d_1), tuple(point_2d_2), color, 1)
+        image = cv2.line(image, tuple(point_2d_2), tuple(point_2d_0), color, 1)
 
 
 def get_translation_error(t_true, t):
